@@ -1,0 +1,42 @@
+import Joi from "joi";
+
+export function validateAddingKid(req, res, next){
+    const full_name = req.body.full_name;
+    const classroom = req.body.classroom;
+
+    const schema = Joi.object({
+        full_name: Joi.string().min(2).required(),
+        classroom: Joi.string().min(2).max(3).required()
+    });
+
+    const {error} = schema.validate({
+        full_name,
+        classroom
+    });
+
+    if(error){
+        const messages = error.details.map(d => d.message);
+        return res.status(400).send(messages.join(','));
+    }
+
+    next();
+}
+
+export function validateGetKidsOf(req, res, next){
+    const user_id = req.params.id;
+
+    const schema = Joi.object({
+        user_id: Joi.string().required()
+    });
+
+    const {error} = schema.validate({
+        user_id
+    });
+
+    if(error){
+        const messages = error.details.map(d => d.message);
+        return res.status(400).send(messages.join(','));
+    }
+
+    next();
+}
