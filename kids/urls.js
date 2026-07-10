@@ -1,10 +1,15 @@
-import express from 'express';
-import { addKid, getKidsOf } from './kids.js';
-import { validateAddingKid, validateGetKidsOf } from './validators.js';
+import { Router } from "express";
+import { addKid, getKidsOf, getAllKids, callKid } from "./kids.js";
+import { validateAddKid, validateCallKid } from "./validators.js";
 
-export const router = express.Router();
+const kidsRouter = Router();
 
-router.post('/', validateAddingKid, addKid);
 
-router.get('/:id', validateGetKidsOf, getKidsOf);
+kidsRouter.post("/", validateAddKid, addKid);
+kidsRouter.get("/:id", getKidsOf);
 
+kidsRouter.post("/:id/call", validateCallKid, callKid);
+
+kidsRouter.get("/admin/all", getAllKids);
+
+export default kidsRouter;
