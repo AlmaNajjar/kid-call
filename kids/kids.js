@@ -53,5 +53,53 @@ export async function getAllKids(req, res, next) {
 }
 
 export async function callKid(req, res, next) {
-    
+    try {
+        const kidId = req.params.id;
+        const userId = req.user.id; 
+        const client = await createSupabaseClient();
+
+      
+        const { data: kid, error: kidError } = await client
+            .from('kids')
+            .select('*')
+            .eq('id', kidId)
+            .single();
+
+        if (kidError || !kid) {
+            throw new AppError('Kid not found', 404);
+        }
+
+       
+        const { error: callError } = await client
+            .from('calls')
+            .insert({ 
+                user_id: userId, 
+                kid_id: kidId 
+            });
+
+        if (callError) {
+            throw new AppError("Could not log the call to active calls", 500, callError);
+        }
+
+        
+        const { error: logError } = await client
+            .from('call_logs')
+            .insert({ 
+                user_id: userId, 
+                kid_id: kidId 
+            });
+
+        if (logError) {
+            throw new AppError("Could not record the call history log", 500, logError);
+        }
+
+      
+        return res.status(200).json({ 
+            status: 'success', 
+            message: 'Call initiated, active call recorded, and history log appended successfully' 
+        });
+
+    } catch (err) {
+        next(err);
+    }
 }
