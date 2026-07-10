@@ -42,3 +42,16 @@ export function validateGetKidsOf(req, res, next){
 
     next();
 }
+export function validateConfirmKid(req, res, next) {
+    const schema = Joi.object({
+        id: Joi.number().integer().required()
+    });
+
+    const { error } = schema.validate({ id: req.params.id });
+
+    if (error) {
+        throw new AppError(error.details[0].message, 400);
+    }
+
+    next();
+}
