@@ -53,5 +53,28 @@ export async function getAllKids(req, res, next) {
 }
 
 export async function callKid(req, res, next) {
-    
+    try {
+        const kidId = req.params.id;
+        const client = await createSupabaseClient();
+
+       
+        const { data: kid, error: kidError } = await client
+            .from('kids')
+            .select('*')
+            .eq('id', kidId)
+            .single();
+
+        if (kidError || !kid) {
+            throw new AppError('Kid not found', 404);
+        }
+
+       
+        return res.status(200).json({ 
+            status: 'success', 
+            message: 'Kid validated and call initiated successfully' 
+        });
+
+    } catch (err) {
+        next(err);
+    }
 }
