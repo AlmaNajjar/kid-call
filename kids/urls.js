@@ -5,7 +5,8 @@ import { validateAddingKid, validateGetKidsOf , validateCallKid } from './valida
 export const router = express.Router();
 
 router.post('/', validateAddingKid, addKid);
-router.get('/call/:id', validateCallKid, callKid);
+router.post("/:id/call", validateCallKid, callKid);
 
 router.get('/:id', validateGetKidsOf, getKidsOf);
+
 
