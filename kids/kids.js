@@ -38,7 +38,7 @@ export async function getKidsOf(req, res, next) {
 
 export async function getAllKids(req, res, next) {
     if(req.user.role !== 'admin') {
-        throw new AppError("You are not allowed to access this resource", 403, error);
+        throw new AppError("You are not allowed to access this resource", 403);
     }
 
     const client = await createSupabaseClient();
@@ -55,10 +55,9 @@ export async function getAllKids(req, res, next) {
 export async function callKid(req, res, next) {
     try {
         const kidId = req.params.id;
-        const userId = req.user.id;
+        const userId = req.user.id; 
         const client = await createSupabaseClient();
 
-        
         const { data: kid, error: kidError } = await client
             .from('kids')
             .select('*')
@@ -80,7 +79,6 @@ export async function callKid(req, res, next) {
             throw new AppError("Could not log the call to active calls", 500, callError);
         }
 
-       
         return res.status(200).json({ 
             status: 'success', 
             message: 'Call initiated and successfully stored in active calls' 
