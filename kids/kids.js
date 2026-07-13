@@ -38,7 +38,7 @@ export async function getKidsOf(req, res, next) {
 
 export async function getAllKids(req, res, next) {
     if(req.user.role !== 'admin') {
-        throw new AppError("You are not allowed to access this resource", 403, error);
+        throw new AppError("You are not allowed to access this resource", 403);
     }
 
     const client = await createSupabaseClient();
@@ -58,7 +58,6 @@ export async function callKid(req, res, next) {
         const userId = req.user.id; 
         const client = await createSupabaseClient();
 
-      
         const { data: kid, error: kidError } = await client
             .from('kids')
             .select('*')
@@ -69,7 +68,6 @@ export async function callKid(req, res, next) {
             throw new AppError('Kid not found', 404);
         }
 
-       
         const { error: callError } = await client
             .from('calls')
             .insert({ 
@@ -81,7 +79,6 @@ export async function callKid(req, res, next) {
             throw new AppError("Could not log the call to active calls", 500, callError);
         }
 
-        
         const { error: logError } = await client
             .from('call_logs')
             .insert({ 
@@ -90,13 +87,13 @@ export async function callKid(req, res, next) {
             });
 
         if (logError) {
-            throw new AppError("Could not record the call history log", 500, logError);
+            throw new AppError("Could not append to call logs history", 500, logError);
         }
 
-      
+   
         return res.status(200).json({ 
             status: 'success', 
-            message: 'Call initiated, active call recorded, and history log appended successfully' 
+            message: 'Call initiated, persisted in active calls, and appended to history logs successfully' 
         });
 
     } catch (err) {
