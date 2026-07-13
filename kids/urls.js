@@ -1,17 +1,14 @@
-import { Router } from "express";
-import { addKid, getKidsOf, getAllKids, callKid, confirmKid } from "./kids.js";
-import { validateAddKid, validateCallKid, validateConfirmKid } from "./validators.js";
+import express from 'express';
+import { addKid, getKidsOf, getAllKids, callKid, confirmKid } from './kids.js';
+import { validateAddingKid, validateGetKidsOf, validateCallKid, validateConfirmKid } from './validators.js';
 
-const kidsRouter = Router();
+export const router = express.Router();
 
+router.post('/', validateAddingKid, addKid);
+router.get('/:id', validateGetKidsOf, getKidsOf);
 
-kidsRouter.post("/", validateAddKid, addKid);
-kidsRouter.get("/:id", getKidsOf);
-kidsRouter.post("/:id/call", validateCallKid, callKid);
+router.post('/:id/call', validateCallKid, callKid);
 
+router.get('/admin/all', getAllKids);
 
-kidsRouter.get("/admin/all", getAllKids);
-
-kidsRouter.patch("/:id/confirm", validateConfirmKid, confirmKid);
-
-export default kidsRouter;
+router.patch('/:id/confirm', validateConfirmKid, confirmKid);
