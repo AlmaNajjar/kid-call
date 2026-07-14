@@ -79,9 +79,21 @@ export async function callKid(req, res, next) {
             throw new AppError("Could not log the call to active calls", 500, callError);
         }
 
+        const { error: logError } = await client
+            .from('call_logs')
+            .insert({ 
+                user_id: userId, 
+                kid_id: kidId 
+            });
+
+        if (logError) {
+            throw new AppError("Could not append to call logs history", 500, logError);
+        }
+
+   
         return res.status(200).json({ 
             status: 'success', 
-            message: 'Call initiated and successfully stored in active calls' 
+            message: 'Call initiated, persisted in active calls, and appended to history logs successfully' 
         });
 
     } catch (err) {
