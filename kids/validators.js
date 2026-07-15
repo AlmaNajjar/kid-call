@@ -42,19 +42,30 @@ export function validateGetKidsOf(req, res, next){
 
     next();
 }
+<<<<<<< HEAD
+export function validateConfirmKid(req, res, next) {
+=======
 export function validateCallKid(req, res, next) {
     const id = req.params.id;
 
    
+>>>>>>> origin/main
     const schema = Joi.object({
         id: Joi.number().integer().required()
     });
 
+<<<<<<< HEAD
+    const { error } = schema.validate({ id: req.params.id });
+
+    if (error) {
+        throw new AppError(error.details[0].message, 400);
+=======
     const { error } = schema.validate({ id });
 
     if (error) {
         const messages = error.details.map(d => d.message);
         throw new AppError(messages.join(','), 400, error);
+>>>>>>> origin/main
     }
 
     next();

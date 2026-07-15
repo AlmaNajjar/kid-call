@@ -90,12 +90,40 @@ export async function callKid(req, res, next) {
             throw new AppError("Could not append to call logs history", 500, logError);
         }
 
-   
         return res.status(200).json({ 
             status: 'success', 
             message: 'Call initiated, persisted in active calls, and appended to history logs successfully' 
         });
 
+    } catch (err) {
+        next(err);
+    }
+}
+
+export async function confirmKid(req, res, next) {
+    try {
+        if (req.user.role !== 'admin') {
+            throw new AppError('Only admins can confirm a kid', 403);
+        }
+
+        const kidId = req.params.id;
+        const client = await createSupabaseClient();
+
+        const { data, error } = await client
+            .from('kids')
+            .update({ is_confirmed: true })
+            .eq('id', kidId)
+            .select()
+            .single();
+
+        if (error || !data) {
+            throw new AppError('Kid not found', 404);
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            data
+        });
     } catch (err) {
         next(err);
     }
